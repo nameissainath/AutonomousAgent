@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query
 
 
 # Dummy student records: student_id -> name
@@ -11,7 +11,7 @@ STUDENTS = {
 }
 
 # Dummy cricketer records: cricketer_id -> name
-CRICKETERS {
+CRICKETERS = {
     "C001": "Sachin Tendulkar",
     "C002": "Virat Kohli",
     "C003": "MS Dhoni",
@@ -72,6 +72,16 @@ def main():
     for name in get_all_student_names():
         print(f"  - {name}")
 
+    print("\nAll cricketers:")
+    for name in get_all_cricketer_names():
+        print(f"  - {name}")
+
+    print("\nResolve cricketer name -> ID:")
+    print(f"  Virat Kohli -> {get_cricketer_id('Virat Kohli')}")
+
+    print("\nResolve cricketer ID -> name:")
+    print(f"  C003 -> {get_cricketer_name('C003')}")
+
 
 @app.get("/students/names")
 def list_student_names():
@@ -95,16 +105,6 @@ def lookup_student_by_name(name: str = Query(..., description="Full student name
     if student_id is None:
         raise HTTPException(status_code=404, detail="Student not found")
     return {"id": student_id, "name": name.strip()}
-
-    print("\nAll cricketers:")
-    for name in get_all_cricketer_names():
-        print(f"  - {name}")
-
-    print("\nResolve cricketer name -> ID:")
-    print(f"  Virat Kohli -> {get_cricketer_id('Virat Kohli')}")
-
-    print("\nResolve cricketer ID -> name:")
-    print(f"  C003 -> {get_cricketer_name('C003')}")
 
 
 if __name__ == "__main__":
