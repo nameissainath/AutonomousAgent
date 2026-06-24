@@ -23,12 +23,10 @@ app = FastAPI()
 
 
 def get_all_student_names() -> list[str]:
-    """Return all student names."""
     return list(STUDENTS.values())
 
 
 def get_student_id(name: str) -> str | None:
-    """Resolve a student name to their ID. Returns None if not found."""
     name_lower = name.strip().lower()
     for student_id, student_name in STUDENTS.items():
         if student_name.lower() == name_lower:
@@ -37,7 +35,6 @@ def get_student_id(name: str) -> str | None:
 
 
 def get_student_name(student_id: str) -> str | None:
-    """Resolve a student ID to their name. Returns None if not found."""
     return STUDENTS.get(student_id.strip().upper())
 
 
@@ -75,11 +72,29 @@ def main():
     for name in get_all_student_names():
         print(f"  - {name}")
 
-    print("\nResolve name -> ID:")
-    print(f"  Alice Johnson -> {get_student_id('Alice Johnson')}")
 
-    print("\nResolve ID -> name:")
-    print(f"  S003 -> {get_student_name('S003')}")
+@app.get("/students/names")
+def list_student_names():
+    """Return all student names."""
+    return {"names": get_all_student_names()}
+
+
+@app.get("/students/{student_id}")
+def get_student_by_id(student_id: str):
+    """Resolve a student ID to their name."""
+    name = get_student_name(student_id)
+    if name is None:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return {"id": student_id.strip().upper(), "name": name}
+
+
+@app.get("/students/lookup/by-name")
+def lookup_student_by_name(name: str = Query(..., description="Full student name")):
+    """Resolve a student name to their ID."""
+    student_id = get_student_id(name)
+    if student_id is None:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return {"id": student_id, "name": name.strip()}
 
     print("\nAll cricketers:")
     for name in get_all_cricketer_names():
@@ -93,4 +108,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
