@@ -1,3 +1,6 @@
+from fastapi import FastAPI
+
+
 # Dummy student records: student_id -> name
 STUDENTS = {
     "S001": "Alice Johnson",
@@ -15,6 +18,8 @@ CRICKETERS = {
     "C004": "Rohit Sharma",
     "C005": "Jasprit Bumrah",
 }
+
+app = FastAPI()
 
 
 def get_all_student_names() -> list[str]:
@@ -53,6 +58,16 @@ def get_cricketer_id(name: str) -> str | None:
 def get_cricketer_name(cricketer_id: str) -> str | None:
     """Resolve a cricketer ID to their name. Returns None if not found."""
     return CRICKETERS.get(cricketer_id.strip().upper())
+
+
+@app.get("/students")
+def students() -> list[str]:
+    return get_all_student_names()
+
+
+@app.get("/cricketers")
+def cricketers() -> list[str]:
+    return get_all_cricketer_names()
 
 
 def main():
