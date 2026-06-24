@@ -11,7 +11,7 @@ STUDENTS = {
 }
 
 # Dummy cricketer records: cricketer_id -> name
-CRICKETERS = {
+CRICKETERS {
     "C001": "Sachin Tendulkar",
     "C002": "Virat Kohli",
     "C003": "MS Dhoni",
